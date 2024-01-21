@@ -126,6 +126,69 @@ START_TEST(mstring_size_checks)
 }
 END_TEST
 
+START_TEST(mstring_length_checks)
+{
+    const char init[] = "Hello";
+
+    // Init a string
+    mstring str = mstr_construct_init(init);
+    size_t len = strlen(init);
+
+    // Check non null
+    ck_assert_ptr_nonnull(str);
+
+    // Size should be 4
+    ck_assert_uint_eq(mstr_get_length(str), len);
+    // Capacity should be size + 1 in init case
+    ck_assert_uint_eq(mstr_get_capacity(str), strlen(init) + 1);
+
+    mstr_delete(str);
+
+    // Now test the same thing but with an empty string with appended chars
+    str = mstr_construct();
+    ck_assert_ptr_nonnull(str);
+
+    // Append four characters
+    mstr_append_char(str, 'a');
+    mstr_append_char(str, 'b');
+    mstr_append_char(str, 'c');
+    mstr_append_char(str, 'd');
+
+    // The string should be "abcd"
+    ck_assert_str_eq(mstr_get(str), "abcd");
+
+    // Delete
+    mstr_delete(str);
+}
+END_TEST
+
+START_TEST(mstring_capacity_checks)
+{
+    const char init[] = "Hello";
+
+    // Init a string
+    mstring str = mstr_construct_init(init);
+    size_t len = strlen(init);
+
+    // Check non null
+    ck_assert_ptr_nonnull(str);
+
+    // Size should be 4
+    ck_assert_uint_eq(mstr_get_length(str), len);
+    // Capacity should be the length of string, including string terminator
+    ck_assert_uint_eq(mstr_get_capacity(str), 6);
+
+    // Append one character
+    mstr_append_char(str, '!');
+
+    // Capacity should be the nearest larget power of 2 (8)
+    ck_assert_uint_eq(mstr_get_capacity(str), 8);
+
+    // Delete
+    mstr_delete(str);
+}
+END_TEST
+
 Suite *mstring_tests_runner_0()
 {
     TCase *test_0 = tcase_create("mstring_construct_destroy");
@@ -136,6 +199,8 @@ Suite *mstring_tests_runner_0()
     TCase *test_1 = tcase_create("mstring_compare_check");
     tcase_add_test(test_1, mstring_compare_test);
     tcase_add_test(test_1, mstring_size_checks);
+    tcase_add_test(test_1, mstring_length_checks);
+    tcase_add_test(test_1, mstring_capacity_checks);
 
     Suite *suite = suite_create("mstring tests");
     suite_add_tcase(suite, test_0);
