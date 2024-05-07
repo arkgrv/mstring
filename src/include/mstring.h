@@ -1,6 +1,10 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /// @brief Maximum value of 16 bit size types
 #define SIZE_MAX_16 0xFFFF
 /// @brief Maximum value of 32 bit size types
@@ -302,3 +306,7 @@ void mstr_clear(mstring str);
  * @param rhs right side object pointer.
  */
 void mstr_swap(mstring lhs, mstring rhs);
+
+#ifdef __cplusplus
+}
+#endif
